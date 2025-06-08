@@ -29,8 +29,8 @@ export function SlideListBar({
           <div 
             key={slide.id}
             onClick={() => onSelectSlide(slide.id)}
-            className={`p-2 mb-2 rounded cursor-pointer hover:bg-gray-300 ${
-              slide.id === activeSlideId ? 'bg-blue-200 border-blue-500 border-2' : 'bg-gray-100'
+            className={`p-2 mb-2 rounded cursor-pointer hover:bg-gray-300 hover:text-slate-800 ${
+              slide.id === activeSlideId ? 'bg-blue-200 border-blue-500 border-2 text-blue-700' : 'bg-gray-100 text-slate-700'
             }`}
           >
             <div className="flex justify-between items-center">

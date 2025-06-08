@@ -2,10 +2,11 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 interface PreviewPaneProps {
   htmlContent: string;
+  scale: number; // Added for manual zoom control
 }
 
 export const PreviewPane = forwardRef<HTMLIFrameElement, PreviewPaneProps>(
-  ({ htmlContent }, ref) => {
+  ({ htmlContent, scale }, ref) => {
     const localIframeRef = useRef<HTMLIFrameElement>(null);
     // Expose the localIframeRef to the parent component via the passed `ref`
     useImperativeHandle(ref, () => localIframeRef.current as HTMLIFrameElement);
@@ -57,6 +58,8 @@ export const PreviewPane = forwardRef<HTMLIFrameElement, PreviewPaneProps>(
           ${htmlContent}
         </div>
         <script>
+          const manualZoomFactor = ${scale || 1.0}; // Use prop scale, default to 1.0
+
           function applyScaling() {
             const wrapper = document.getElementById('slide-content-wrapper');
             const body = document.body;
@@ -85,13 +88,14 @@ export const PreviewPane = forwardRef<HTMLIFrameElement, PreviewPaneProps>(
 
             const scaleX = viewportWidth / slideNativeWidth;
             const scaleY = viewportHeight / slideNativeHeight;
-            const scale = Math.min(scaleX, scaleY) * 0.98; // Apply 2% padding
+            const autoFitScale = Math.min(scaleX, scaleY) * 0.98; // Apply 2% padding
+            const finalScale = autoFitScale * manualZoomFactor;
 
-            wrapper.style.transform = 'scale(' + scale + ')';
+            wrapper.style.transform = 'scale(' + finalScale + ')';
             
             // Calculate margins to center the scaled wrapper
-            const scaledWidth = slideNativeWidth * scale;
-            const scaledHeight = slideNativeHeight * scale;
+            const scaledWidth = slideNativeWidth * finalScale;
+            const scaledHeight = slideNativeHeight * finalScale;
             wrapper.style.marginLeft = (viewportWidth - scaledWidth) / 2 + 'px';
             wrapper.style.marginTop = (viewportHeight - scaledHeight) / 2 + 'px';
           }
